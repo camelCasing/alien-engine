@@ -1,2 +1,11 @@
 # 👽 alien-engine
-basic game engine created with python
+Basic game engine created with python
+
+
+📜 Check out the [Wiki](https://github.com/camelCasing/alien-engine/wiki) for information on creating games.
+
+🛠️ To build the binaries for this you will first need python and the library "pyinstaller" installed. Go in the directory that the python file is in and run the command
+
+`pyinstaller <filename>.py --onefile`
+
+and the binaries should be in the file "dist"
