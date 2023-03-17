@@ -1,2 +1,2 @@
-move gamer abs 25 100
+move gamer rel 75 75
 print ugh
