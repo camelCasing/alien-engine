@@ -38,7 +38,6 @@ def executeFunction(sprite, where):
 
         if line.startswith("move"):
             if sprites.get(line.split(" ")[1]):
-                print(line.split(" ")[1])
                 if line.split(" ")[2] == "abs":
                     sprites[line.split(" ")[1]]["x"] = int(line.split(" ")[3])
                     sprites[line.split(" ")[1]]["y"] = int(line.split(" ")[4])
