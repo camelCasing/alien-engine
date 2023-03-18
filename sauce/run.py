@@ -6,6 +6,7 @@ try:
 
     sprites = {}
     loadedSprites = []
+    variables = {}
 
     manifestFile = open("manifest.json", "r")
     manifest = json.loads(manifestFile.read())
@@ -28,10 +29,12 @@ try:
             for i in line.split(" "):
                 if i.startswith("#"):
                     if i.startswith("#ran"):
-                        minimum = i.split("(")[1].rstrip(")").split("-")[0]
-                        maximum = i.split("(")[1].rstrip(")").split("-")[1]
+                        minimum = i.split("(")[1].rstrip(")").split(".")[0]
+                        maximum = i.split("(")[1].rstrip(")").split(".")[1]
                         result = random.randint(int(minimum), int(maximum))
                         line = line.replace(i, str(result))
+                    elif variables.get(i.lstrip("#")):
+                        line = line.replace(i, variables[i.lstrip("#")])
 
             if line.startswith("move"):
                 if sprites.get(line.split(" ")[1]):
@@ -53,6 +56,8 @@ try:
                 createdSprite = {"source": spriteName, "x": spriteX, "y": spriteY}
 
                 sprites[spriteId] = createdSprite
+            elif line.startswith("set"):
+                variables[line.split(" ")[1]] = line.split(" ")[2]
 
 
 
