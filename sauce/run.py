@@ -71,6 +71,9 @@ try:
         image = pygame.image.load(spriteRelativePath+"sprite.png")
         window.blit(image, (x, y))
 
+        if os.path.exists(spriteRelativePath+"on_load"):
+            executeFunction(image, spriteRelativePath+"on_load")
+
         imageRect = image.get_rect()
         imageRect.topleft = (x, y)
 
