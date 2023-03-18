@@ -1,5 +1,6 @@
 try:
     import pygame
+    import random
     import json
     import os
 
@@ -16,7 +17,7 @@ try:
 
     running = True
     clicked = False
-    debug = True
+    debug = False
 
     def executeFunction(sprite, where):
         f = open(where, "r")
@@ -24,6 +25,14 @@ try:
         f.close()
 
         for line in code.splitlines():
+            for i in line.split(" "):
+                if i.startswith("#"):
+                    if i.startswith("#ran"):
+                        minimum = i.split("(")[1].rstrip(")").split("-")[0]
+                        maximum = i.split("(")[1].rstrip(")").split("-")[1]
+                        result = random.randint(int(minimum), int(maximum))
+                        line = line.replace(i, str(result))
+
             if line.startswith("move"):
                 if sprites.get(line.split(" ")[1]):
                     print(line.split(" ")[1])
