@@ -20,6 +20,11 @@ running = True
 clicked = False
 debug = False
 
+bgName = manifest["background"]
+bg = pygame.image.load(f"entity/{bgName}/sprite.png")
+bg = pygame.transform.scale(bg, (manifest["window_width"], manifest["window_height"]))
+window.blit(bg, (manifest["window_width"] / 2, manifest["window_height"] / 2))
+
 def executeFunction(sprite, where):
     f = open(where, "r")
     code = f.read()
@@ -55,6 +60,9 @@ def executeFunction(sprite, where):
             createdSprite = {"source": spriteName, "x": spriteX, "y": spriteY}
 
             sprites[spriteId] = createdSprite
+
+            if os.path.exists(f"entity/{spriteName}/on_load"):
+                executeFunction(None, f"entity/{spriteName}/on_load")
         elif line.startswith("set"):
             variables[line.split(" ")[1]] = line.split(" ")[2]
 
@@ -68,6 +76,16 @@ def onKeyRelease(keyString):
         if os.path.exists(f"entity/{sprite}/on_release_{keyString}"):
             executeFunction(None, f"entity/{sprite}/on_release_{keyString}")
 
+def onMouseDown(keyString):
+    for sprite in os.listdir("entity"):
+        if os.path.exists(f"entity/{sprite}/on_mouse_down{keyString}"):
+            executeFunction(None, f"entity/{sprite}/on_mouse_down")
+
+def onMouseUp(keyString):
+    for sprite in os.listdir("entity"):
+        if os.path.exists(f"entity/{sprite}/on_mouse_up{keyString}"):
+            executeFunction(None, f"entity/{sprite}/on_mouse_up")
+
 def scaleObject(object_, width, height):
     pygame.transform.scale(object_, (int(width), int(height)))
 
@@ -77,9 +95,6 @@ def drawSprite(identifier, x ,y):
 
     image = pygame.image.load(spriteRelativePath+"sprite.png")
     window.blit(image, (x, y))
-
-    if os.path.exists(spriteRelativePath+"on_load"):
-        executeFunction(image, spriteRelativePath+"on_load")
 
     imageRect = image.get_rect()
     imageRect.topleft = (x, y)
@@ -106,6 +121,8 @@ while running:
             onKeyPress(event.unicode)
         elif event.type == pygame.KEYUP:
             onKeyRelease(event.unicode)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            onMouseDown(event.unicode)
 
     for sprite in loadedSprites:
         loadedSprites.remove(sprite)
