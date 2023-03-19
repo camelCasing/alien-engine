@@ -1,5 +1,5 @@
 # 👽 alien-engine
-Basic game engine created with python
+Folder and Script based Pygame Engine
 
 
 📜 Check out the [Wiki](https://github.com/camelCasing/alien-engine/wiki) for information on creating games.
