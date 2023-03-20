@@ -20,12 +20,12 @@ try:
     clicked = False
     debug = False
 
-    bgName = manifest["background"]
-    bg = pygame.image.load(f"entity/{bgName}/sprite.png")
-    bg = pygame.transform.scale(bg, (manifest["window_width"], manifest["window_height"]))
-    window.blit(bg, (manifest["window_width"] / 2, manifest["window_height"] / 2))
+    #bgName = manifest["background"]
+    #bg = pygame.image.load(f"entity/{bgName}/sprite.png")
+    #bg = pygame.transform.scale(bg, (manifest["window_width"], manifest["window_height"]))
+    #window.blit(bg, (manifest["window_width"] / 2, manifest["window_height"] / 2))
 
-    def executeFunction(sprite, where):
+    def executeFunction(spriteId, where):
         f = open(where, "r")
         code = f.read()
         f.close()
@@ -38,6 +38,8 @@ try:
                         maximum = i.split("(")[1].rstrip(")").split(".")[1]
                         result = random.randint(int(minimum), int(maximum))
                         line = line.replace(i, str(result))
+                    elif i.startswith("#this"):
+                        line = line.replace(i, spriteId)
                     elif variables.get(i.lstrip("#")):
                         line = line.replace(i, variables[i.lstrip("#")])
 
@@ -67,23 +69,25 @@ try:
                 variables[line.split(" ")[1]] = line.split(" ")[2]
 
     def onKeyPress(keyString):
-        for sprite in os.listdir("entity"):
-            if os.path.exists(f"entity/{sprite}/on_press_{keyString}"):
-                executeFunction(None, f"entity/{sprite}/on_press_{keyString}")
+        for sprite in sprites:
+            spriteName = sprites[sprite]["source"]
+            if os.path.exists(f"entity/{spriteName}/on_press_{keyString}"):
+                executeFunction(sprite, f"entity/{spriteName}/on_press_{keyString}")
 
     def onKeyRelease(keyString):
-        for sprite in os.listdir("entity"):
-            if os.path.exists(f"entity/{sprite}/on_release_{keyString}"):
-                executeFunction(None, f"entity/{sprite}/on_release_{keyString}")
+        for sprite in sprites:
+            spriteName = sprites[sprite]["source"]
+            if os.path.exists(f"entity/{spriteName}/on_release_{keyString}"):
+                executeFunction(sprite, f"entity/{spriteName}/on_release_{keyString}")
 
-    def onMouseDown(keyString):
+    def onMouseDown():
         for sprite in os.listdir("entity"):
-            if os.path.exists(f"entity/{sprite}/on_mouse_down{keyString}"):
+            if os.path.exists(f"entity/{sprite}/on_mouse_down"):
                 executeFunction(None, f"entity/{sprite}/on_mouse_down")
 
-    def onMouseUp(keyString):
+    def onMouseUp():
         for sprite in os.listdir("entity"):
-            if os.path.exists(f"entity/{sprite}/on_mouse_up{keyString}"):
+            if os.path.exists(f"entity/{sprite}/on_mouse_up"):
                 executeFunction(None, f"entity/{sprite}/on_mouse_up")
 
     def scaleObject(object_, width, height):
@@ -125,6 +129,11 @@ try:
                 onMouseDown()
             elif event.type == pygame.MOUSEBUTTONUP:
                 onMouseUp()
+
+        for sprite in sprites:
+            spriteName = sprites[sprite]["source"]
+            if os.path.exists(f"entity/{spriteName}/on_render"):
+                executeFunction(sprite, f"entity/{spriteName}/on_render")
 
         for sprite in loadedSprites:
             loadedSprites.remove(sprite)
