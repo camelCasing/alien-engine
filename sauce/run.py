@@ -1,7 +1,9 @@
 try:
+    import pygame.mixer
     import pygame
     import random
     import json
+    import sys
     import os
 
     sprites = {}
@@ -40,6 +42,22 @@ try:
                         line = line.replace(i, str(result))
                     elif i.startswith("#this"):
                         line = line.replace(i, spriteId)
+                    elif i.startswith("#posX"):
+                        print("getting x")
+                        entityId = i.spit("(")[1].rstrip(")")
+                        print("getting x 2")
+                        result = sprites[entityId]["x"]
+                        print("getting x 3")
+                        line = line.replace(i, result)
+                        print("getting x 4")
+                    elif i.startswith("#posY"):
+                        print("getting y")
+                        entityId = i.spit("(")[1].rstrip(")")
+                        print("getting y 2")
+                        result = sprites[entityId]["y"]
+                        print("getting y 3")
+                        line = line.replace(i, result)
+                        print("getting y 4")
                     elif variables.get(i.lstrip("#")):
                         line = line.replace(i, variables[i.lstrip("#")])
 
@@ -67,6 +85,9 @@ try:
                     executeFunction(None, f"entity/{spriteName}/on_load")
             elif line.startswith("set"):
                 variables[line.split(" ")[1]] = line.split(" ")[2]
+            elif line.startswith("sound"):
+                if line.split(" ")[1] == "play":
+                    soundId = line.split(" ")[2]
 
     def onKeyPress(keyString):
         for sprite in sprites:
@@ -81,14 +102,16 @@ try:
                 executeFunction(sprite, f"entity/{spriteName}/on_release_{keyString}")
 
     def onMouseDown():
-        for sprite in os.listdir("entity"):
-            if os.path.exists(f"entity/{sprite}/on_mouse_down"):
-                executeFunction(None, f"entity/{sprite}/on_mouse_down")
+        for sprite in sprites:
+            spriteName = sprites[sprite]["source"]
+            if os.path.exists(f"entity/{spriteName}/on_mouse_down"):
+                executeFunction(sprite, f"entity/{spriteName}/on_mouse_down")
 
     def onMouseUp():
-        for sprite in os.listdir("entity"):
-            if os.path.exists(f"entity/{sprite}/on_mouse_up"):
-                executeFunction(None, f"entity/{sprite}/on_mouse_up")
+        for sprite in sprites:
+            spriteName = sprites[sprite]["source"]
+            if os.path.exists(f"entity/{spriteName}/on_mouse_up"):
+                executeFunction(sprite, f"entity/{spriteName}/on_mouse_up")
 
     def scaleObject(object_, width, height):
         pygame.transform.scale(object_, (int(width), int(height)))
